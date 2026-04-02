@@ -30,26 +30,43 @@ namespace DI_From_Scratch.Core
             // 1. Find the service descriptor
             ServiceDescriptor? service = Lookup<T>();
             if (service is null)
-            {
-                // Service not registered
                 return default;
-            }
 
             // 2. Handle Singleton lifetime
             if (service.ServiceLifetime == ServiceLifetime.Singleton)
             {
-                // If instance already exists, return it
                 if (service.Instance != null)
                     return (T)service.Instance;
 
-                // Otherwise, create it and store for future
-                service.Instance = Activator.CreateInstance(service.ImplementationType);
+                // Recursive constructor injection
+                service.Instance = CreateInstance(service.ImplementationType);
                 return (T)service.Instance;
             }
 
             // 3. Handle Transient lifetime (always create a new instance)
-            object? instance = Activator.CreateInstance(service.ImplementationType);
-            return (T?)instance;
+            return (T?)CreateInstance(service.ImplementationType);
+        }
+
+        // Helper method to handle constructor injection
+        private object CreateInstance(Type implementationType)
+        {
+            var constructor = implementationType.GetConstructors().First();
+            var parameters = constructor.GetParameters();
+
+            // Resolve each dependency recursively
+            var args = parameters.Select(p => GetServiceByType(p.ParameterType)).ToArray();
+
+            return Activator.CreateInstance(implementationType, args)!;
+        }
+
+        // Non-generic GetService for runtime Type
+        private object? GetServiceByType(Type type)
+        {
+            var method = typeof(ServiceProvider)
+                .GetMethod(nameof(GetService), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+                ?.MakeGenericMethod(type);
+
+            return method?.Invoke(this, null);
         }
     }
 }
