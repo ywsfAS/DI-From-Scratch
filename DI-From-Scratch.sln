@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36310.24 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DI-From-Scratch", "DI-From-Scratch\DI-From-Scratch.csproj", "{51979C6C-8025-4362-9409-4363E311799F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DI_From_Scratch.Tests", "DI_From_Scratch.Tests\DI_From_Scratch.Tests.csproj", "{B2E0418B-8F0C-41FF-B7EE-6A9FD071D794}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{51979C6C-8025-4362-9409-4363E311799F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51979C6C-8025-4362-9409-4363E311799F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51979C6C-8025-4362-9409-4363E311799F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51979C6C-8025-4362-9409-4363E311799F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2E0418B-8F0C-41FF-B7EE-6A9FD071D794}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2E0418B-8F0C-41FF-B7EE-6A9FD071D794}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2E0418B-8F0C-41FF-B7EE-6A9FD071D794}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2E0418B-8F0C-41FF-B7EE-6A9FD071D794}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FB6DABC3-71E9-477D-96E9-3721556A07AB}
+	EndGlobalSection
+EndGlobal

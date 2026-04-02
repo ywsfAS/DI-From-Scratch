@@ -1,0 +1,47 @@
+# Build Folders
+bin/
+obj/
+Debug/
+Release/
+
+# User-specific files
+*.user
+*.suo
+*.userprefs
+*.vsp
+*.vspscc
+
+# Visual Studio Code
+.vscode/
+.vs/
+# Rider IDE
+.idea/
+
+# NuGet Packages
+*.nupkg
+packages/
+.nuget/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test Results
+TestResults/
+*.trx
+
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Other
+*.cache
+*.pdb
