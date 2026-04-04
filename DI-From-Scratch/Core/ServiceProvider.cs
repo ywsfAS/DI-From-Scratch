@@ -15,25 +15,26 @@ namespace DI_From_Scratch.Core
         }
 
         // Look up the descriptor for a given type T
-        private ServiceDescriptor? Lookup<T>()
+        private ServiceDescriptor? Lookup(Type serviceType)
         {
-            if (!_servicesCollection.ServiceDescriptors.ContainsKey(typeof(T)))
-            {
-                return null;
+            if (_servicesCollection.ServiceDescriptors.ContainsKey(serviceType)) { 
+                return _servicesCollection.ServiceDescriptors[serviceType];
             }
-            return _servicesCollection.ServiceDescriptors[typeof(T)];
+            return null;
+            
         }
 
         // Resolve an instance of type T
         public T? GetService<T>()
         {
             var hashSet = new HashSet<Type>();
-            return (T?)resolver<T>(hashSet);
+            var constructorCache = new Dictionary<Type, ConstructorInfo>();
+            return (T?)resolver(typeof(T),hashSet , constructorCache);
         }
-        private object? resolver<T>(HashSet<Type> hashSet)
+        private object? resolver(Type serviceType ,HashSet<Type> hashSet , Dictionary<Type , ConstructorInfo> constructorInfos)
         {
             // 1. Find the service descriptor
-            ServiceDescriptor? service = Lookup<T>();
+            ServiceDescriptor? service = Lookup(serviceType);
             if (service is null)
                 return null;
             DetectCircularDependecyAndThrowError(hashSet,service.ServiceType);
@@ -43,15 +44,15 @@ namespace DI_From_Scratch.Core
                 if (service.ServiceLifetime == ServiceLifetime.Singleton)
                 {
                     if (service.Instance != null)
-                        return (T)service.Instance;
+                        return service.Instance;
 
                     // Recursive constructor injection
-                    service.Instance = CreateInstance(service.ImplementationType, hashSet);
+                    service.Instance = CreateInstance(service.ImplementationType, hashSet , constructorInfos);
 
-                    return (T)service.Instance;
+                    return service.Instance;
                 }
                 // Other Cases
-                return (T?)CreateInstance(service.ImplementationType, hashSet);
+                return CreateInstance(service.ImplementationType, hashSet , constructorInfos);
             }
             finally
             {
@@ -68,34 +69,24 @@ namespace DI_From_Scratch.Core
         }
 
         // Helper method to handle constructor injection
-        private object CreateInstance(Type implementationType , HashSet<Type> hashSet)
+        private object CreateInstance(Type implementationType , HashSet<Type> hashSet , Dictionary<Type , ConstructorInfo> constructorInfos)
         {
-            var constructor = implementationType.GetConstructors().First();
-            var parameters = constructor.GetParameters();
+            ConstructorInfo constrcutor;
+            if (constructorInfos.ContainsKey(implementationType))
+            {
+                constrcutor = constructorInfos[implementationType];
+            }
+            else
+            {
+                constrcutor = implementationType.GetConstructors().OrderByDescending( c => c.GetParameters().Length).First();
+                constructorInfos.Add(implementationType, constrcutor);
+            }
+            var parameters = constrcutor.GetParameters();
 
             // Resolve each dependency recursively
-            var args = parameters.Select(p => GetServiceByType(p.ParameterType ,hashSet)).ToArray();
+            var args = parameters.Select(p => resolver(p.ParameterType ,hashSet , constructorInfos)).ToArray();
 
             return Activator.CreateInstance(implementationType, args)!;
-        }
-
-        // Non-generic GetService for runtime Type
-        private object? GetServiceByType(Type type, HashSet<Type> hashSet)
-        {
-            var method = typeof(ServiceProvider)
-                .GetMethod(nameof(resolver), BindingFlags.NonPublic | BindingFlags.Instance)
-                ?? throw new InvalidOperationException($"Cannot find resolver method for type {type.Name}");
-
-            method = method.MakeGenericMethod(type);
-
-            try
-            {
-                return method.Invoke(this, new object[] { hashSet });
-            }
-            catch (TargetInvocationException tie)
-            {
-                throw tie.InnerException!; // unwrap the real exception
-            }
         }
     }
 }
