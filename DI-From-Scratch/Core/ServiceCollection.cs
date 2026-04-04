@@ -24,8 +24,7 @@ namespace DI_From_Scratch.Core
         {
             var serviceDescriptor = ServiceDescriptor.Create(typeof(T) , typeof(T)  ,ServiceLifetime.Transient);
             _services[serviceDescriptor.ServiceType] = serviceDescriptor;
-        }
-
+        }        
         public void AddScoped<TRequest,TResponse>()
         {
             var serviceDescriptor = ServiceDescriptor.Create(typeof(TRequest) , typeof(TResponse)  ,ServiceLifetime.Scoped);
@@ -54,6 +53,13 @@ namespace DI_From_Scratch.Core
         }
         public void AddSingleton<T>() {
             var serviceDescriptor = ServiceDescriptor.Create(typeof(T) , typeof(T)  ,ServiceLifetime.Singleton);
+            _services[serviceDescriptor.ServiceType] = serviceDescriptor;
+        }
+        public void AddSingleton(object instance)
+        {
+            var type = instance.GetType();
+            var serviceDescriptor = ServiceDescriptor.Create(type, type, ServiceLifetime.Singleton, sp => instance);
+            serviceDescriptor.Instance = instance;
             _services[serviceDescriptor.ServiceType] = serviceDescriptor;
         }
     }

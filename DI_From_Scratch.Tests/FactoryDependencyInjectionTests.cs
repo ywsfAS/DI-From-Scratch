@@ -3,6 +3,7 @@ using DI_From_Scratch.Tests.Services;
 using DI_From_Scratch.Tests.Services.FactoryDependecy;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -49,6 +50,33 @@ namespace DI_From_Scratch.Tests
             var injectedService = notificationField?.GetValue(notificationService);
 
             Assert.Same(emailService, injectedService);
+        }
+        
+        [Fact]
+        public void RegisterDependencyInjection_ShouldInjectDependency()
+        {
+            // Arrange
+            var email = new EmailService("HoaaaASX@example.com");
+            var services = new ServiceCollection();
+
+            // Factory registration for IMessageService
+            services.AddSingleton(email);
+
+
+            var provider = new ServiceProvider(services);
+
+            // Act
+            var emailService = provider.GetService<EmailService>();
+
+            // Assert
+
+            // Ensure emailService is not null
+            Assert.NotNull(emailService);
+
+            // Ensure notificationService is not null
+            Assert.Same(email,emailService);
+
+
         }
     }
 }
