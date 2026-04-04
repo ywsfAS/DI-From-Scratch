@@ -14,17 +14,21 @@ namespace DI_From_Scratch.Core
         public Type ServiceType { get; }
         public Type ImplementationType { get; }
         public ServiceLifetime ServiceLifetime { get; }
+
+        public Func<IServiceProviderDI, object>? ServiceFactory { get; } = null; // to handle special dependency creation
         public object? Instance { get; set; } = null; // to handle reference to instance 
-        private ServiceDescriptor(Type serviceType , Type implementationType , ServiceLifetime serviceLifetime)
+        private ServiceDescriptor(Type serviceType , Type implementationType , ServiceLifetime serviceLifetime , Func<IServiceProviderDI , object>? factory = null)
         {
             ServiceLifetime = serviceLifetime;
             ServiceType = serviceType;
             ImplementationType = implementationType;
             ServiceType = serviceType;
+            ServiceFactory = factory;
+
         }
-        public static ServiceDescriptor Create(Type serviceType , Type implementationType , ServiceLifetime lifetime)
+        public static ServiceDescriptor Create(Type serviceType , Type implementationType , ServiceLifetime lifetime , Func<IServiceProviderDI , object>? factory = null)
         {
-            return new ServiceDescriptor(serviceType , implementationType , lifetime);
+            return new ServiceDescriptor(serviceType , implementationType , lifetime , factory);
         }
 
     }

@@ -15,6 +15,11 @@ namespace DI_From_Scratch.Core
             var serviceDescriptor = ServiceDescriptor.Create(typeof(TRequest) , typeof(TResponse)  ,ServiceLifetime.Transient);
             _services[serviceDescriptor.ServiceType] = serviceDescriptor;
         }
+        public void AddTransient<TRequest>(Func<IServiceProviderDI , object> factory)
+        {
+            var serviceDescriptor = ServiceDescriptor.Create(typeof(TRequest),typeof(object), ServiceLifetime.Transient , factory);
+            _services[serviceDescriptor.ServiceType] = serviceDescriptor;
+        }
         public void AddTransient<T>()
         {
             var serviceDescriptor = ServiceDescriptor.Create(typeof(T) , typeof(T)  ,ServiceLifetime.Transient);
@@ -24,6 +29,11 @@ namespace DI_From_Scratch.Core
         public void AddScoped<TRequest,TResponse>()
         {
             var serviceDescriptor = ServiceDescriptor.Create(typeof(TRequest) , typeof(TResponse)  ,ServiceLifetime.Scoped);
+            _services[serviceDescriptor.ServiceType] = serviceDescriptor;
+        }
+        public void AddScoped<TRequest>(Func<IServiceProviderDI , object> factory)
+        {
+            var serviceDescriptor = ServiceDescriptor.Create(typeof(TRequest), typeof(object), ServiceLifetime.Scoped , factory);
             _services[serviceDescriptor.ServiceType] = serviceDescriptor;
         }
         public void AddScoped<T>()
@@ -37,7 +47,11 @@ namespace DI_From_Scratch.Core
             var serviceDescriptor = ServiceDescriptor.Create(typeof(TRequest) , typeof(TResponse)  ,ServiceLifetime.Singleton);
             _services[serviceDescriptor.ServiceType] = serviceDescriptor;
         }
-
+        public void AddSingleton<TRequest>(Func<IServiceProviderDI , object> factory)
+        {
+            var serviceDescriptor = ServiceDescriptor.Create(typeof(TRequest) , typeof(object)  ,ServiceLifetime.Singleton , factory);
+            _services[serviceDescriptor.ServiceType] = serviceDescriptor;
+        }
         public void AddSingleton<T>() {
             var serviceDescriptor = ServiceDescriptor.Create(typeof(T) , typeof(T)  ,ServiceLifetime.Singleton);
             _services[serviceDescriptor.ServiceType] = serviceDescriptor;

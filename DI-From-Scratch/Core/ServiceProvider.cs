@@ -45,11 +45,18 @@ namespace DI_From_Scratch.Core
                 {
                     if (service.Instance != null)
                         return service.Instance;
+                if (service.ServiceFactory != null) {
+                        service.Instance = service.ServiceFactory(this);
+                        return service.Instance;
+                }
+                 // Recursive constructor injection
+                service.Instance = CreateInstance(service.ImplementationType, hashSet , constructorInfos);
 
-                    // Recursive constructor injection
-                    service.Instance = CreateInstance(service.ImplementationType, hashSet , constructorInfos);
-
-                    return service.Instance;
+                return service.Instance;
+                }
+                if (service.ServiceFactory != null)
+                {
+                    return service.ServiceFactory(this);
                 }
                 // Other Cases
                 return CreateInstance(service.ImplementationType, hashSet , constructorInfos);
