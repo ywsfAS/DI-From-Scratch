@@ -12,7 +12,7 @@ public class ServiceCollectionTests
         services.AddTransient<IUserService, UserService>();
 
         Assert.Single(services.ServiceDescriptors);
-        var descriptor = services.ServiceDescriptors[typeof(IUserService)];
+        var descriptor = services.ServiceDescriptors[typeof(IUserService)].First();
         Assert.Equal(typeof(IUserService), descriptor.ServiceType);
         Assert.Equal(typeof(UserService), descriptor.ImplementationType);
         Assert.Equal(ServiceLifetime.Transient, descriptor.ServiceLifetime);

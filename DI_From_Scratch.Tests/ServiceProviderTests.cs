@@ -46,12 +46,12 @@ public class ServiceProviderTests
     }
 
     [Fact]
-    public void Unregistered_Service_Should_Return_Null()
+    public void Unregistered_Service_Should_Return_NotNull()
     {
         var services = new ServiceCollection();
         var provider = new ServiceProvider(services);
 
-        var service = provider.GetService<IUserService>();
-        Assert.Null(service);
+        var service = provider.GetService<UserService>();
+        Assert.NotNull(service);
     }
 }

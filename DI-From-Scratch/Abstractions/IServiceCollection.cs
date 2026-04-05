@@ -9,7 +9,7 @@ namespace DI_From_Scratch.Abstractions
 {
     public interface IServiceCollection
     {
-        IReadOnlyDictionary<Type,ServiceDescriptor> ServiceDescriptors { get; }
+        IReadOnlyDictionary<Type,IEnumerable<ServiceDescriptor>> ServiceDescriptors { get; }
 
         // Register Transient services
         void AddTransient<TRequest, TResponse>();
