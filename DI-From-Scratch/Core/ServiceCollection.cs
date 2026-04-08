@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace DI_From_Scratch.Core
 {
-    public class ServiceCollection : IServiceCollection
+    public class ServiceCollection : IServiceCollection  , IDisposable
     {
         private readonly Dictionary<Type, List<ServiceDescriptor>> _services;
 
@@ -151,5 +151,20 @@ namespace DI_From_Scratch.Core
                     }
                 }
             }
+        }
+        public void Dispose()
+        {
+            foreach (var service in _services)
+            {
+                var serviceDecriptorsList = service.Value;
+                foreach(var serviceType in serviceDecriptorsList)
+                {
+                    var instance = serviceType.Instance;
+                    if(instance != null && instance is IDisposable disposableInstance)
+                    {
+                        disposableInstance.Dispose();
+                    }
+                }
+            } 
         }
     } }

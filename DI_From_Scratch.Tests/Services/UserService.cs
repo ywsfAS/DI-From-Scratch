@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DI_From_Scratch.Tests.Services
 {
     [Singleton]
-    public class UserService : IUserService
+    public class UserService : IUserService , IDisposable
     {
         private readonly Guid _id;
 
@@ -20,5 +20,8 @@ namespace DI_From_Scratch.Tests.Services
         public string GetUserName() => $"UserService-{_id}";
 
         public Guid Id => _id;
+        public void Dispose() {
+            Console.WriteLine($"Release Rescources of instance{GetUserName()}");
+        }
     }
 }

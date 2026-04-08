@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace DI_From_Scratch.Core
 {
-    public class ServiceProvider : IServiceProviderDI
+    public class ServiceProvider : IServiceProviderDI , IDisposable
     {
         // The collection of registered service descriptors
         private readonly ServiceCollection _servicesCollection;
@@ -150,6 +150,11 @@ namespace DI_From_Scratch.Core
             }).ToArray();
 
             return Activator.CreateInstance(implementationType, args)!;
+        }
+        // Release phase
+        public void Dispose()
+        {
+            _servicesCollection.Dispose();
         }
     }
 }
