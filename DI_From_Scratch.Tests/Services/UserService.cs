@@ -1,3 +1,4 @@
+using DI_From_Scratch.Lifetime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace DI_From_Scratch.Tests.Services
 {
+    [Singleton]
     public class UserService : IUserService
     {
         private readonly Guid _id;

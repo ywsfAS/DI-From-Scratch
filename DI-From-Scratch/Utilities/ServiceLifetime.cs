@@ -11,5 +11,6 @@ namespace DI_From_Scratch.Utilities
         Transient,
         Scoped,
         Singleton,
+        All,
     }
 }

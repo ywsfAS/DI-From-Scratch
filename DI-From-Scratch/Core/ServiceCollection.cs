@@ -1,7 +1,8 @@
 using DI_From_Scratch.Abstractions;
 using DI_From_Scratch.Utilities;
-using System;
+using DI_From_Scratch.Lifetime;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace DI_From_Scratch.Core
 {
@@ -30,6 +31,12 @@ namespace DI_From_Scratch.Core
             var descriptor = ServiceDescriptor.Create(typeof(TRequest), typeof(TResponse), ServiceLifetime.Transient);
             AddDescriptor(descriptor);
         }
+        public void AddTransient(Type TRequest , Type TResponse)
+        {
+            var descriptor = ServiceDescriptor.Create(TRequest, TResponse, ServiceLifetime.Transient);
+            AddDescriptor(descriptor);
+
+        }
 
         public void AddTransient<TRequest>(Func<IServiceProviderDI, object> factory)
         {
@@ -46,6 +53,12 @@ namespace DI_From_Scratch.Core
         public void AddScoped<TRequest, TResponse>()
         {
             var descriptor = ServiceDescriptor.Create(typeof(TRequest), typeof(TResponse), ServiceLifetime.Scoped);
+            AddDescriptor(descriptor);
+        }
+
+        public void AddScoped(Type TRequest , Type TResponse)
+        {
+            var descriptor = ServiceDescriptor.Create(TRequest, TResponse, ServiceLifetime.Scoped);
             AddDescriptor(descriptor);
         }
 
@@ -66,7 +79,11 @@ namespace DI_From_Scratch.Core
             var descriptor = ServiceDescriptor.Create(typeof(TRequest), typeof(TResponse), ServiceLifetime.Singleton);
             AddDescriptor(descriptor);
         }
-
+        public void AddSingleton(Type TRequest , Type TResponse)
+        {
+            var descriptor = ServiceDescriptor.Create(TRequest, TResponse, ServiceLifetime.Singleton);
+            AddDescriptor(descriptor);
+        }
         public void AddSingleton<TRequest>(Func<IServiceProviderDI, object> factory)
         {
             var descriptor = ServiceDescriptor.Create(typeof(TRequest), typeof(object), ServiceLifetime.Singleton, factory);
@@ -86,5 +103,53 @@ namespace DI_From_Scratch.Core
             descriptor.Instance = instance;
             AddDescriptor(descriptor);
         }
-    }
-}
+        private void Register(Type serviceType , Type implementationType,ServiceLifetime type)
+        {
+            switch (type)
+            {
+                case ServiceLifetime.Singleton:
+                    AddSingleton(serviceType, implementationType);
+                    break;
+
+                case ServiceLifetime.Scoped:
+                    AddScoped(serviceType, implementationType);
+                    break;
+
+                case ServiceLifetime.Transient:
+                    AddTransient(serviceType, implementationType);
+                    break;
+            }
+        }
+        // Register the container by assembly
+        public void AutoRegister(Assembly[] assemblies, ServiceLifetime? lifetime = ServiceLifetime.All, Predicate<Type>? predicate = null)
+        {
+            foreach (Assembly assembly in assemblies)
+            {
+                foreach (Type implementationType in assembly.GetTypes())
+                {
+                    // Skip invalid types
+                    if (!implementationType.IsClass || implementationType.IsAbstract)
+                        continue;
+
+                    // Get lifetime attribute
+                    var lifetimeAttr = implementationType
+                        .GetCustomAttribute<ServiceLifetimeAttribute>(false);
+
+                    if (lifetimeAttr is null || (lifetime != ServiceLifetime.All && lifetimeAttr.ServiceLifetime != lifetime))
+                        continue;
+
+                    var interfaces = implementationType.GetInterfaces();
+
+                    // Apply predicate safely
+                    var serviceTypes = predicate != null
+                        ? interfaces.Where(i => predicate(i))
+                        : interfaces;
+
+                    foreach (var serviceType in serviceTypes)
+                    {
+                        Register(serviceType, implementationType, lifetimeAttr.ServiceLifetime);
+                    }
+                }
+            }
+        }
+    } }
