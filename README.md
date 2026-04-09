@@ -73,22 +73,22 @@ Supports:
 - Lifetime selection
 - Predicate filtering
 - Flexible discovery rules
-
+```
 var services = new ServiceCollection();
 
 services.AutoRegister(
     new[] { Assembly.GetExecutingAssembly() },
     ServiceLifetime.Singleton
 );
-
+```
 ### With Predicate Filtering
-
+```
 services.AutoRegister(
     new[] { Assembly.GetExecutingAssembly() },
     ServiceLifetime.Transient,
     t => t.Name.Contains("IP")
 );
-
+```
 Use cases:
 - Filtering interfaces
 - Excluding internal types
@@ -98,16 +98,16 @@ Use cases:
 ### 2. Factory-Based Registration
 
 Supports custom instance creation with logic or external configuration.
-
+```
 services.AddSingleton<IMessageService>(sp =>
     new EmailService("test@example.com")
 );
-
+```
 Or direct instance:
-
+```
 var email = new EmailService("test@example.com");
 services.AddSingleton<IMessageService>(email);
-
+```
 Use cases:
 - Configuration-based services
 - External SDK initialization
@@ -117,21 +117,22 @@ Use cases:
 ### 3. Multiple Implementations (IEnumerable Support)
 
 Supports resolving all implementations of an interface.
-
+```
 var validators = provider.GetService<IEnumerable<IValidator>>();
 
 services.AddTransient<IValidator, EmailValidator>();
 services.AddTransient<IValidator, PasswordValidator>();
-
+```
 Result:
+```
 - EmailValidator
 - PasswordValidator
-
+```
 
 ### 4. Service Release / Disposal
-
+```
 provider.Dispose();
-
+```
 Behavior:
 - Disposes singleton services
 - Logs release events
@@ -144,9 +145,9 @@ Behavior:
 2. Set DI-From-Scratch as startup project  
 3. Run Program.cs  
 4. Run tests:
-
+```
 dotnet test
-
+```
 
 ## Purpose
 
